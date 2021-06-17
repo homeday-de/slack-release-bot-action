@@ -86,15 +86,3 @@ jobs:
           body: ${{ steps.release_body.outputs.text }}
           context: Homeday Blocks
 ```
-
-See the action in ... action [#1](https://github.com/probot/example-github-action/issues/1)
-
-Alternatively, you can pass the token with `with:`
-
-```yml
-- uses: probot/exmaple-github-action@v1
-  with:
-    token: ${{ secrets.GITHUB_TOKEN }}
-    # or
-    # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
