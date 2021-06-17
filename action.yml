@@ -1,0 +1,56 @@
+name: Slack Release BOT
+author: homeday-de
+description: Slack Release BOT used by Homeday engineering
+inputs:
+  webhook_url: # change this
+    required: true
+    description: Slack webhook URL
+  title:
+    required: true
+    description: Message title
+  body:
+    required: true
+    description: Message body (markdown allowed but needs to be Slackified first)
+  context:
+    required: true
+    description: Which project is being released?
+runs:
+  using: 'composite'
+  steps:
+    - name: Announce on Slack 📢
+      shell: bash
+      run: |
+        curl ${{ inputs.webhook_url }} \
+          --request POST \
+          --header 'Content-type: application/json' \
+          --data \
+            '{
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "${{ inputs.title }}"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ inputs.body }}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "plain_text",
+                      "text": "${{ inputs.context }}"
+                    }
+                  ]
+                }
+              ]
+            }'
