@@ -2,7 +2,7 @@ name: Slack Release BOT
 author: homeday-de
 description: Slack Release BOT used by Homeday engineering
 inputs:
-  webhook_url: # change this
+  webhook_url:
     required: true
     description: Slack webhook URL
   title:
