@@ -61,4 +61,4 @@ runs:
         curl ${{ inputs.webhook_url }} \
           --request POST \
           --header 'Content-type: application/json' \
-          --data $data
+          --data "$data"
