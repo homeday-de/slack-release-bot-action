@@ -9,7 +9,7 @@ inputs:
     required: true
     description: Message title
   body:
-    required: true
+    required: false
     description: Message body (markdown allowed but needs to be Slackified first)
   context:
     required: true
@@ -20,37 +20,45 @@ runs:
     - name: Announce on Slack 📢
       shell: bash
       run: |
+        header='{
+          "type": "header",
+          "text": {
+          "type": "plain_text",
+          "text": "${{ inputs.title }}"
+          }
+        },'
+        divider='{
+          "type": "divider"
+        },'
+        # Slack markdown doesn't accept empty `text`
+        if [ ! -z '${{ inputs.body }}' ]
+        then
+          body='{
+            "type": "section",
+            "text": {
+            "type": "mrkdwn",
+            "text": "${{ inputs.body }}"
+            }
+          },'
+        fi
+        context='{
+          "type": "context",
+          "elements": [
+          {
+            "type": "plain_text",
+            "text": "${{ inputs.context }}"
+          }
+          ]
+        }'
+        blocks='"blocks": [
+          '$header'
+          '$divider'
+          '$body'
+          '$context'
+        ]'
+        data='{'$blocks'}'
+        
         curl ${{ inputs.webhook_url }} \
           --request POST \
           --header 'Content-type: application/json' \
-          --data \
-            '{
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "${{ inputs.title }}"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "${{ inputs.body }}"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "plain_text",
-                      "text": "${{ inputs.context }}"
-                    }
-                  ]
-                }
-              ]
-            }'
+          --data $data
